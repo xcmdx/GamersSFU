@@ -1,0 +1,38 @@
+
+
+Бахнуть миграцию в базу данных:
+
+    python manage.py makemigrations
+    python manage.py migrate
+
+содать виртуальное окружение 
+    virtualenv GamersSFUProgect
+    
+Запустить виртуальную среду 
+
+    Запустить терминал во вкладке Terminal (New Terminal)
+    перейти в папку WarrantyWatch
+    прописать Scripts\activate
+
+Установить все пакеты в каталоге WarrantyWatch:
+    pip install -r requirements.txt
+
+Обновить все пакеты в файле в каталоге WarrantyWatch:
+    pip freeze > requirements.txt
+
+Django:
+    
+    создать проект (уже создан):
+        Scripts\django-admin startproject Main
+    
+    создание приложения:
+        python manage.py startapp WarrantyWatchAPI
+
+    запуск:
+        в cd Main 
+        python manage.py runserver 127.0.0.1:8001    
+    
+(не нужно запускать, запускается автоматически)
+Dephne:
+    запуск web socket (порт 8000)
+        daphne Main.asgi:application 
