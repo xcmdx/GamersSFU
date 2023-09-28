@@ -13,9 +13,11 @@ urlpatterns = [
     path("", views.index, name="index"),
 
     # upload
-    path("/upload", views.upload, name="upload")
+    path("upload/", views.upload.as_view(), name="upload"),
 
-    # download
-    path("/download", views.dowload, name="download")
+    # get game post
+
+    # for js
+    path("imgsbyid/", views.get_img_from_post_id.as_view(), name="getimgs")
 
 ]

@@ -50,7 +50,7 @@ class MyUsers(AbstractBaseUser, PermissionsMixin):
 
 # фвйлы игры в zip формате
 class ZipFile(models.Model):
-    File = models.FileField(upload_to="./static/zip_files/")
+    GameFile = models.FileField(upload_to="./static/zip_files/")
 
     class Meta:
         verbose_name = 'Файлы игр'
@@ -75,7 +75,7 @@ class GameImage(models.Model):
     ImageFile = models.FileField(upload_to="./static/img/")
 
     class Meta:
-        verbose_name = 'Жанры игр'
+        verbose_name = 'Скриншоты игр'
         ordering = [ 'id' ]
     
     def __str__(self):
@@ -90,7 +90,7 @@ class Game(models.Model):
 
     GameFile = models.ForeignKey(ZipFile, on_delete=models.CASCADE, null=False)
 
-    Developer = models.ForeignKey(MyUsers, on_delete=models.DO_NOTHING, null=False)
+    Developer = models.ForeignKey(MyUsers, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name = 'Стрыницы игр'
