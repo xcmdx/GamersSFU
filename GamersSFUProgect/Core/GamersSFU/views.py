@@ -80,6 +80,20 @@ class upload(View):
         return HttpResponse('сомнительно')
     
 
+# получить пост
+class getpost(View):
+    def get(self, request):
+        try:
+            p_id = request.GET['post_id']
+
+            return render(request, 'gamepost.html')         
+        
+        except Exception as ex:
+            return HttpResponse(f'ошибка получения {ex.args}')
+
+
+
+ 
 
 # url /imgsbyid&post_id=4 для получения изображений поста
 class get_img_from_post_id(View):
@@ -99,5 +113,22 @@ class get_img_from_post_id(View):
          
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
+
+
+class register(View):
+
+    def get(self, request):
+        return render(request, 'register.html', {'RegisterForm' : RegisterForm })
+
+    def post(self, request):
+        pass
+
+class login(View):
+
+    def get(self, request):
+        return render(request, 'login.html', {'LoginForm' : LoginFrom })
+
+    def post(self, request):
+        pass
 
 
