@@ -1,1 +1,15 @@
-hello
+
+{% load static %}
+
+
+
+<html>
+
+
+    <h3>Название: {{ post.Title }}</h3>
+    <h4>Об этой игре</h4>
+    <hr>
+    <h5>{{ post.Description }}</h5>
+    <a href='/{{ post.GameFile.GameFile }}'>Скачать игру</a>
+
+</hml>

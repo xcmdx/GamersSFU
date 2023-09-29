@@ -81,12 +81,14 @@ class upload(View):
     
 
 # получить пост
+# прим url /getpost/?post_id=4 для получения поста c id 4 например
+
 class getpost(View):
     def get(self, request):
         try:
             p_id = request.GET['post_id']
-
-            return render(request, 'gamepost.html')         
+            post = Game.objects.get(id=p_id)
+            return render(request, 'gamepost.html', {'post' : post})         
         
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
@@ -95,7 +97,8 @@ class getpost(View):
 
  
 
-# url /imgsbyid&post_id=4 для получения изображений поста
+# получить изображения поста
+# прим url /imgsbyid/?post_id=4 для получения изображений поста c id 4 например
 class get_img_from_post_id(View):
 
     def get(self, request):
