@@ -10,6 +10,14 @@
     <h4>Об этой игре</h4>
     <hr>
     <h5>{{ post.Description }}</h5>
+
+
+    {% for i in img %}
+
+        <img width="250px" height="250px" src="{{i.GameImage.ImageFile.url}}">
+       
+    {% endfor %}
+    <br>
     <a href='/{{ post.GameFile.GameFile }}'>Скачать игру</a>
 
 </hml>

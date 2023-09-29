@@ -88,8 +88,9 @@ class getpost(View):
         try:
             p_id = request.GET['post_id']
             post = Game.objects.get(id=p_id)
-            return render(request, 'gamepost.html', {'post' : post})         
-        
+            filterimages = GamePostImage.objects.filter(Game = p_id )
+            return render(request, 'gamepost.html', {'post' : post, 'img' : filterimages})         
+
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
 
