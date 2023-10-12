@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 from django.views.generic import View
 
+from django.db.models import Q
 
 from .forms import *
 from .models import *
@@ -47,7 +48,7 @@ class upload(View):
 
                 if multiimageform.is_valid():
 
-                    imgfiles = request.FILES.getlist('images')
+                    imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
 
                     # Проверка количества файлов
                     if len(imgfiles) <= 5:
@@ -82,7 +83,6 @@ class upload(View):
 
 # получить пост
 # прим url /getpost/?post_id=4 для получения поста c id 4 например
-
 class getpost(View):
     def get(self, request):
         try:
@@ -136,3 +136,16 @@ class login(View):
         pass
 
 
+class search(View):
+
+    def get(self, request):
+        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })
+
+    def post(selt, request):
+        _searchform = SearchForm(request.POST)
+
+        if _searchform.is_valid():
+            query = _searchform.cleaned_data['search_field']
+            return render(request, 'search.html', {'searched' : Game.objects.filter(Q(Title__icontains=query)), 'search_form' : SearchForm })
+        
+        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })

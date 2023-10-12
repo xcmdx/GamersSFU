@@ -8,6 +8,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 
 
+from multiupload.fields import MultiFileField, MultiMediaField, MultiImageField
 
 
 # форма поста игры
@@ -24,13 +25,22 @@ class PlaerGamePostForm(forms.ModelForm):
 # форма загрузки нескольких изображений
 class MultiImageForm(forms.Form):
     
-    images = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    # images = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
-    def clean_files(self):
-        files = self.cleaned_data['files']
-        if not files:
-            raise ValidationError('Please select at least one file.')
-        return files
+
+    # If you need to upload media files, you can use this:
+    gameimages = MultiMediaField(
+        min_num=1,
+        max_num=5,
+        max_file_size=1024*1024*5,
+        media_type='image'  # 'audio', 'video' or 'image'
+    )
+    
+    # def clean_files(self):
+    #     files = self.cleaned_data['files']
+    #     if not files:
+    #         raise ValidationError('Please select at least one file.')
+    #     return files
 
 
 # форма загрузки zip файлов игры
@@ -106,3 +116,6 @@ class RegisterForm(forms.ModelForm):
     )
     
 
+class SearchForm(forms.Form):
+
+    search_field = forms.CharField( max_length=255, label="Поиск по названию")

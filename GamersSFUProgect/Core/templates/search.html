@@ -1,0 +1,35 @@
+
+{% load static %}
+
+<html>
+
+    <head>
+        {% include 'header.html' %}
+    </head>
+
+    <body>
+
+
+        <div>
+            <form method="post" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{search_form.as_p}}
+                
+                <button type=“submit”>Поиск</button>
+
+            </form>
+        </div>
+
+        {% for c in searched %}
+            
+            <div>
+                <a href="/getpost/?post_id={{c.id}}">Название: "{{ c.Title }}"</p>
+                
+            </div>
+        {% endfor  %}
+
+    </body>
+
+</html>

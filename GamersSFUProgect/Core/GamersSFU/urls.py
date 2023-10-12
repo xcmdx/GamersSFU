@@ -19,6 +19,11 @@ urlpatterns = [
     path("getpost/", views.getpost.as_view()),
 
     # for js
-    path("imgsbyid/", views.get_img_from_post_id.as_view(), name="getimgs")
+    path("imgsbyid/", views.get_img_from_post_id.as_view(), name="getimgs"),
+
+    # search
+    path("search/", views.search.as_view(), name="search"),
+    
+
 
 ]
