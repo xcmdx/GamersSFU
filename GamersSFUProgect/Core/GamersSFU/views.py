@@ -24,8 +24,10 @@ class upload(View):
                       { 
                           'PlaerGamePostForm' : PlaerGamePostForm, 
                           'GameFileForm' : GameFileForm,
-                          'MultiImageForm' : MultiImageForm
-                      })
+                          'MultiImageForm' : MultiImageForm,
+                          'MultiGanreForm' : GameGanreForm,
+                          'GameIcoForm' : GameIcoForm,
+                       })
     
     def post(self, request):
 

@@ -22,6 +22,16 @@ class PlaerGamePostForm(forms.ModelForm):
         fields = ['Title', 'Description']
 
 
+# форма жанров
+class GameGanreForm(forms.ModelForm):
+
+    Ganre = forms.MultipleChoiceField( choices = Genre.objects.all() )
+
+
+    class Meta:
+        model = Genre
+        fields = [ 'Genre' ]
+
 # форма загрузки нескольких изображений
 class MultiImageForm(forms.Form):
     
@@ -33,14 +43,9 @@ class MultiImageForm(forms.Form):
         min_num=1,
         max_num=5,
         max_file_size=1024*1024*5,
-        media_type='image'  # 'audio', 'video' or 'image'
+        media_type='image' 
     )
     
-    # def clean_files(self):
-    #     files = self.cleaned_data['files']
-    #     if not files:
-    #         raise ValidationError('Please select at least one file.')
-    #     return files
 
 
 # форма загрузки zip файлов игры
@@ -49,6 +54,11 @@ class GameFileForm(forms.ModelForm):
         model = ZipFile
         fields = [ 'GameFile' ]
 
+# форма игровой иконки 
+class GameIcoForm(forms.ModelForm):
+    class Meta:
+        model = GameIco
+        fields = [ 'ImageFile' ]
 
 # вход
 class LoginFrom(forms.Form):

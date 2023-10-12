@@ -72,10 +72,21 @@ class Genre(models.Model):
     
 # изображения игр
 class GameImage(models.Model):
-    ImageFile = models.FileField(upload_to="./static/img/")
+    ImageFile = models.FileField(upload_to="./static/img/game_screens")
 
     class Meta:
         verbose_name = 'Скриншоты игр'
+        ordering = [ 'id' ]
+    
+    def __str__(self):
+        return f"{self.ImageFile.name}"
+
+# иконки игр
+class GameIco(models.Model):
+    ImageFile = models.FileField(upload_to="./static/img/game_ioc")
+
+    class Meta:
+        verbose_name = 'иконки игр'
         ordering = [ 'id' ]
     
     def __str__(self):
@@ -87,6 +98,8 @@ class Game(models.Model):
     Title = models.CharField(max_length=255)
 
     Description = models.CharField(max_length=1024)
+
+    GameIco = models.ForeignKey(GameIco, on_delete=models.CASCADE, null=True)
 
     GameFile = models.ForeignKey(ZipFile, on_delete=models.CASCADE, null=False)
 
@@ -101,7 +114,7 @@ class Game(models.Model):
 
 # смежная таблица объединяющая игры и жанры 
 class GameGanre(models.Model):
-    Game = models.ForeignKey(Game, on_delete=models.DO_NOTHING, null=False)
+    Game = models.ForeignKey(Game, on_delete=models.CASCADE, null=False)
     Genre = models.ForeignKey(Genre, on_delete=models.DO_NOTHING, null=False)
 
     class Meta:
@@ -114,7 +127,7 @@ class GameGanre(models.Model):
 # смежная таблица объединяющая игры и изображения
 class GamePostImage(models.Model):
     Game = models.ForeignKey(Game, on_delete=models.DO_NOTHING, null=False)
-    GameImage = models.ForeignKey(GameImage, on_delete=models.DO_NOTHING, null=False)
+    GameImage = models.ForeignKey(GameImage, on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name = 'Игры связанные с изображениями'
