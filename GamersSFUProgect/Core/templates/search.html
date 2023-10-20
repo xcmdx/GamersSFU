@@ -22,9 +22,14 @@
             </form>
         </div>
 
+        <!-- Цикл по всем результатам -->
         {% for c in searched %}
             
             <div>
+                
+                <!-- Иконка игры -->
+                <img width="324px" height="151px" src="{{c.GameIco.ImageFile.url}}">
+
                 <a href="/getpost/?post_id={{c.id}}">Название: "{{ c.Title }}"</p>
                 
             </div>

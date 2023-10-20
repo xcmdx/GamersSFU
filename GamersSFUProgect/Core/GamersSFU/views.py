@@ -8,7 +8,8 @@ from django.db.models import Q
 
 from .forms import *
 from .models import *
-
+from os import remove
+import os
 import json
 
 def index(request):
@@ -23,66 +24,73 @@ class upload(View):
                     request, 'upload.html', 
                       { 
                           'PlaerGamePostForm' : PlaerGamePostForm, 
-                          'GameFileForm' : GameFileForm,
                           'MultiImageForm' : MultiImageForm,
                           'MultiGanreForm' : GameGanreForm,
-                          'GameIcoForm' : GameIcoForm,
                        })
     
     def post(self, request):
 
-        # загружаем несколько изображений
+        # теги игры
+        gametags = GameGanreForm(request.POST)
+
+        # информацию об игре
+        playergamepostform = PlaerGamePostForm(request.POST, request.FILES)
+
+        # иконка игры
+        # gameico = GameIcoForm(request.POST, request.FILES)
+
+        # несколько изображений
         multiimageform = MultiImageForm(request.POST, request.FILES)
         
-        # загружаем файл игры в zip
-        gamefileform = GameFileForm(request.POST, request.FILES)
+        # файл игры в zip
+        # gamefileform = GameFileForm(request.POST, request.FILES)
 
-        # загружаем информацию об игре
-        playergamepostform = PlaerGamePostForm(request.POST)
+        check_form = (playergamepostform.is_valid(), multiimageform.is_valid())
         
-        if playergamepostform.is_valid():
+        # if playergamepostform.is_valid() and gamefileform.is_valid() and multiimageform.is_valid() and gametags.is_valid() and gameico.is_valid():
+        if playergamepostform.is_valid() and multiimageform.is_valid() and gametags.is_valid():
 
-            if gamefileform.is_valid():
-                
-                gamefile = gamefileform.save(commit=False)
-                playergamepost = playergamepostform.save(commit=False)
-                playergamepost.GameFile = gamefile
-
-                if multiimageform.is_valid():
-
-                    imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
-
-                    # Проверка количества файлов
-                    if len(imgfiles) <= 5:
-
-                        for img in imgfiles:
-                            
-                            gamefileform.save()
-                            playergamepost.save()
-
-                            savefile = GameImage(ImageFile=img)
-                            savefile.save()
-                            gamepostimage = GamePostImage(Game=playergamepost, GameImage=savefile)
-                            gamepostimage.save()
-                        return HttpResponseRedirect('')
-
-                    else:
-                        return HttpResponse('Количество файлов превышает ограничение')
-                else:
-                    print('форма не валидна x3')
-                    print(multiimageform.errors)
-            else:
-                print('форма не валидна x2')
-                print(gamefileform.errors)
-        else:
+            # gamefile = gamefileform.save(commit=False)
             
-            print('форма не валидна x1')
-            print(playergamepostform.errors)
+            playergamepost = playergamepostform.save(commit=False)
+            
+            playergamepost_data = playergamepostform.cleaned_data
+
+            gamefile = ZipFile.objects.create(GameFile=playergamepost_data['GameFile'])
+            gameico  = GameIco.objects.create(ImageFile=playergamepost_data['GameIco'])
+            
+            playergamepost.GameFile = gamefile
+            playergamepost.GameIco = gameico
+
+            # потом добавлю пофигу
+            # playergamepost.Developer =
+            
+
+            imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
+            
+            playergamepost.save()
+            
+            for genre in gametags.cleaned_data['Genre']:
+                GameGanre.objects.create(Game=playergamepost, Genre=genre)
+
+            for img in imgfiles:
+                
+                savefile = GameImage(ImageFile=img)
+                savefile.save()
+                
+                GamePostImage.objects.create(Game=playergamepost, GameImage=savefile)
+                # gamepostimage = GamePostImage(Game=playergamepost, GameImage=savefile)
+                # gamepostimage.save()
+
+            return HttpResponseRedirect('')
+
+        else:
+            print(check_form)
+
 
         #return HttpResponseRedirect('')
-        return HttpResponse('сомнительно')
+        return HttpResponse(f'ошибка в данных форм {check_form}')
     
-
 # получить пост
 # прим url /getpost/?post_id=4 для получения поста c id 4 например
 class getpost(View):
@@ -91,14 +99,13 @@ class getpost(View):
             p_id = request.GET['post_id']
             post = Game.objects.get(id=p_id)
             filterimages = GamePostImage.objects.filter(Game = p_id )
-            return render(request, 'gamepost.html', {'post' : post, 'img' : filterimages})         
+
+            tags = GameGanre.objects.filter(Game = p_id)
+
+            return render( request, 'gamepost.html', {'post' : post, 'img' : filterimages, 'tags' : tags })         
 
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
-
-
-
- 
 
 # получить изображения поста
 # прим url /imgsbyid/?post_id=4 для получения изображений поста c id 4 например
@@ -106,11 +113,11 @@ class get_img_from_post_id(View):
 
     def get(self, request):
         try:
-            
             id = 0
             images = {'images': []}
             p_id = request.GET['post_id']
             filterimages = GamePostImage.objects.filter(Game = p_id )
+            tags = GameGanre.objects.filter(Game = p_id)
 
             for i in filterimages:
                 images['images'].append( { 'id' : str(id), 'img' : str(i.GameImage.ImageFile.url) } )
@@ -120,6 +127,65 @@ class get_img_from_post_id(View):
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
 
+# удаляет пост по id 
+# прим /delpost/?post_id=4 
+
+def delete_post_from_post_id(request, post_id):
+
+
+    try:
+
+        id = 0
+        images = {'images': []}
+        p_id = int(post_id) 
+        post = Game.objects.get(id=p_id)
+
+        filterimages = GamePostImage.objects.filter(Game = p_id )
+        tags = GameGanre.objects.filter(Game = p_id)
+
+        for img in filterimages:
+            
+            if os.path.exists(f"./{img.GameImage.ImageFile.url}"):
+                remove(f"./{img.GameImage.ImageFile.url}")
+
+            img.delete()
+        
+        for tg in tags:
+            tg.delete()
+
+        gameico = post.GameIco
+        postfile = post.GameFile 
+
+        post.delete()
+        
+        if os.path.exists(f"./{gameico.ImageFile.url}"):
+            remove(f"./{gameico.ImageFile.url}")
+
+        if os.path.exists(f"./{postfile.GameFile.url}"):
+            remove(f"./{postfile.GameFile.url}")
+
+        postfile.delete()
+        gameico.delete()
+
+        return HttpResponse('sucsess')
+
+    except Exception as ex:
+        return HttpResponse(f'ошибка {ex}')
+    
+
+class search(View):
+
+    def get(self, request):
+        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })
+
+    def post(selt, request):
+        _searchform = SearchForm(request.POST)
+
+        if _searchform.is_valid():
+            query = _searchform.cleaned_data['search_field']
+            return render(request, 'search.html', {'searched' : Game.objects.filter(Q(Title__icontains=query)), 'search_form' : SearchForm })
+        
+        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })
 
 class register(View):
 
@@ -136,18 +202,3 @@ class login(View):
 
     def post(self, request):
         pass
-
-
-class search(View):
-
-    def get(self, request):
-        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })
-
-    def post(selt, request):
-        _searchform = SearchForm(request.POST)
-
-        if _searchform.is_valid():
-            query = _searchform.cleaned_data['search_field']
-            return render(request, 'search.html', {'searched' : Game.objects.filter(Q(Title__icontains=query)), 'search_form' : SearchForm })
-        
-        return render(request, 'search.html', {'searched' : Game.objects.all(), 'search_form' : SearchForm })

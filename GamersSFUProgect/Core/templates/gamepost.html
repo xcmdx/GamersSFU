@@ -8,6 +8,9 @@
         {% include 'header.html' %}
     </head>
 
+    <!-- Иконка игры -->
+    <img width="324px" height="151px" src="{{post.GameIco.ImageFile.url}}">
+
     <h3>Название: {{ post.Title }}</h3>
     <h4>Об этой игре</h4>
     <hr>
@@ -16,10 +19,23 @@
 
     {% for i in img %}
 
-        <img width="250px" height="250px" src="{{i.GameImage.ImageFile.url}}">
+        <img width="400px" height="250px" src="{{i.GameImage.ImageFile.url}}">
        
     {% endfor %}
     <br>
+
+    <p>Теги:</p>
+    
+    <p> 
+        {% for t in tags %}
+
+            <a href="">#{{t.Genre}}</a>
+        
+        {% endfor %}
+    </p>
+
+    <br>
+
     <a href='/{{ post.GameFile.GameFile }}'>Скачать игру</a>
 
 </hml>

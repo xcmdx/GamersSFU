@@ -1,6 +1,8 @@
 
 
 
+import mimetypes
+import rarfile  # pip install rarfile
 
 from .models import *
 from django import forms
@@ -17,21 +19,39 @@ class PlaerGamePostForm(forms.ModelForm):
     Title = forms.CharField(max_length=255)
     Description = forms.CharField(max_length=255)
     
+
+    GameFile = forms.FileField()
+    GameIco = forms.FileField()
+
     class Meta:
         model = Game
         fields = ['Title', 'Description']
 
+    def clean_image(self):
+        data = self.cleaned_data
+        
+        if data.get('GameIco'):
+            file_obj = data.getlist('GameIco')
+            content_type = mimetypes.guess_type(file_obj[0])[0]
+            if content_type not in  ['image/jpeg', 'image/png', 'image/gif']:
+                raise ValidationError(f'GameIco File type not allowed ({content_type}).')
+        
+        if data.get('GameFile'):
+            file_obj = data.getlist('GameFile')
+            content_type = mimetypes.guess_type(file_obj[0])[0]
+            if content_type.test_rarfile():
+                raise ValidationError(f'GameFile File type not allowed ({content_type}).')
+
+        return data
 
 # форма жанров
-class GameGanreForm(forms.ModelForm):
+class GameGanreForm(forms.Form):
 
-    Ganre = forms.MultipleChoiceField( choices = Genre.objects.all() )
-
-
-    class Meta:
-        model = Genre
-        fields = [ 'Genre' ]
-
+    Genre = forms.ModelMultipleChoiceField(
+        queryset=Genre.objects.all(), 
+        widget=forms.CheckboxSelectMultiple
+    )
+    
 # форма загрузки нескольких изображений
 class MultiImageForm(forms.Form):
     
@@ -46,19 +66,17 @@ class MultiImageForm(forms.Form):
         media_type='image' 
     )
     
-
-
 # форма загрузки zip файлов игры
-class GameFileForm(forms.ModelForm):
-    class Meta:
-        model = ZipFile
-        fields = [ 'GameFile' ]
+# class GameFileForm(forms.ModelForm):
+#     class Meta:
+#         model = ZipFile
+#         fields = [ 'GameFile' ]
 
 # форма игровой иконки 
-class GameIcoForm(forms.ModelForm):
-    class Meta:
-        model = GameIco
-        fields = [ 'ImageFile' ]
+# class GameIcoForm(forms.ModelForm):
+#     class Meta:
+#         model = GameIco
+#         fields = [ 'ImageFile' ]
 
 # вход
 class LoginFrom(forms.Form):
