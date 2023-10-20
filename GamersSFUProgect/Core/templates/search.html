@@ -1,9 +1,13 @@
 
+
+<!-- load static нужна для подгрузки статичных файлов css там js -->
 {% load static %}
 
 <html>
 
     <head>
+        
+        <!-- подключает файл заголовка -->
         {% include 'header.html' %}
     </head>
 
@@ -15,6 +19,7 @@
 
                 {% csrf_token %}
 
+                <!-- форма поиска в принципе можно обычную форму сделать -->
                 {{search_form.as_p}}
                 
                 <button type=“submit”>Поиск</button>
@@ -22,15 +27,16 @@
             </form>
         </div>
 
-        <!-- Цикл по всем результатам -->
+        <!-- Цикл по всем результатам поиска -->
         {% for c in searched %}
             
             <div>
                 
-                <!-- Иконка игры -->
+                <!-- {{c.GameIco.ImageFile.url}} - адреса иконок игр -->
                 <img width="324px" height="151px" src="{{c.GameIco.ImageFile.url}}">
 
-                <a href="/getpost/?post_id={{c.id}}">Название: "{{ c.Title }}"</p>
+                <!-- иконки игры -->
+                <a href="/getpost/{{c.id}}/">Название: "{{ c.Title }}"</p>
                 
             </div>
         {% endfor  %}

@@ -94,9 +94,9 @@ class upload(View):
 # получить пост
 # прим url /getpost/?post_id=4 для получения поста c id 4 например
 class getpost(View):
-    def get(self, request):
+    def get(self, request, post_id):
         try:
-            p_id = request.GET['post_id']
+            p_id = int(post_id) 
             post = Game.objects.get(id=p_id)
             filterimages = GamePostImage.objects.filter(Game = p_id )
 
@@ -127,14 +127,11 @@ class get_img_from_post_id(View):
         except Exception as ex:
             return HttpResponse(f'ошибка получения {ex.args}')
 
-# удаляет пост по id 
-# прим /delpost/?post_id=4 
-
+# удаляет пост по id  
+# прим /delpost/4/ удалит пост и файлы на диске поста с id = 4
 def delete_post_from_post_id(request, post_id):
 
-
     try:
-
         id = 0
         images = {'images': []}
         p_id = int(post_id) 

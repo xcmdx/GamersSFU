@@ -1,34 +1,48 @@
 
+
+
+<!-- load static нужна для подгрузки статичных файлов css там js -->
 {% load static %}
 
 
 
 <html>
     <head>
+        <!-- подключает файл заголовка -->
         {% include 'header.html' %}
     </head>
 
-    <!-- Иконка игры -->
+    <!-- {{post.GameIco.ImageFile.url}} - грубо говоря это адрес иконки игры -->
     <img width="324px" height="151px" src="{{post.GameIco.ImageFile.url}}">
-
+    
+    <!-- {{ post.Title }} - это название поста с игрой  -->
     <h3>Название: {{ post.Title }}</h3>
+
     <h4>Об этой игре</h4>
     <hr>
+    
+    
+    <!-- {{ post.Description }} - это описание поста с игрой  -->
     <h5>{{ post.Description }}</h5>
 
-
+    <!-- цикл проходит по списку изображений поста -->
     {% for i in img %}
-
+        
+        <!-- {{i.GameImage.ImageFile.url}} - это адрес изображений игры  -->
         <img width="400px" height="250px" src="{{i.GameImage.ImageFile.url}}">
        
     {% endfor %}
-    <br>
 
+    <br>
+    
     <p>Теги:</p>
     
     <p> 
+        
+        <!-- цикл проходит по списку тегов поста -->
         {% for t in tags %}
-
+        
+            <!-- теги игры -->
             <a href="">#{{t.Genre}}</a>
         
         {% endfor %}
@@ -36,6 +50,7 @@
 
     <br>
 
+    <!-- ссылка на загрузку игры -->
     <a href='/{{ post.GameFile.GameFile }}'>Скачать игру</a>
 
 </hml>

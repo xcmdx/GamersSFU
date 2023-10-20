@@ -22,7 +22,7 @@ urlpatterns = [
     path("upload/", views.upload.as_view(), name="upload"),
 
     # get game post
-    path("getpost/", views.getpost.as_view()),
+    path("getpost/<int:post_id>/", views.getpost.as_view(), name="getpost"),
 
     # delete
     path("deletepost/<int:post_id>/", views.delete_post_from_post_id, name="deletepost"),
