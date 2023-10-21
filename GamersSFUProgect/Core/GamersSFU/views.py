@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
@@ -6,20 +6,30 @@ from django.views.generic import View
 
 from django.db.models import Q
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .forms import *
 from .models import *
 from os import remove
 import os
 import json
 
+
 def index(request):
     return render(request, "index.html")
 
-
 # загрузка поста пользователем
-class upload(View):
+class upload(LoginRequiredMixin, View):
+    
+    login_url = '/login/'
 
     def get(self, request):
+
+        # проверка на разработчика
+        if (not request.user.is_developer):
+            return HttpResponse("недостаточно прав")
+        
         return render(
                     request, 'upload.html', 
                       { 
@@ -29,22 +39,20 @@ class upload(View):
                        })
     
     def post(self, request):
-
+        
+        # проверка на разработчика
+        if (not request.user.is_developer):
+            return HttpResponse("недостаточно прав")
+        
         # теги игры
         gametags = GameGanreForm(request.POST)
 
         # информацию об игре
         playergamepostform = PlaerGamePostForm(request.POST, request.FILES)
 
-        # иконка игры
-        # gameico = GameIcoForm(request.POST, request.FILES)
-
         # несколько изображений
         multiimageform = MultiImageForm(request.POST, request.FILES)
         
-        # файл игры в zip
-        # gamefileform = GameFileForm(request.POST, request.FILES)
-
         check_form = (playergamepostform.is_valid(), multiimageform.is_valid())
         
         # if playergamepostform.is_valid() and gamefileform.is_valid() and multiimageform.is_valid() and gametags.is_valid() and gameico.is_valid():
@@ -62,10 +70,9 @@ class upload(View):
             playergamepost.GameFile = gamefile
             playergamepost.GameIco = gameico
 
-            # потом добавлю пофигу
+            # потом добавлю 
             # playergamepost.Developer =
             
-
             imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
             
             playergamepost.save()
@@ -74,13 +81,10 @@ class upload(View):
                 GameGanre.objects.create(Game=playergamepost, Genre=genre)
 
             for img in imgfiles:
-                
+            
                 savefile = GameImage(ImageFile=img)
-                savefile.save()
-                
+                savefile.save()                
                 GamePostImage.objects.create(Game=playergamepost, GameImage=savefile)
-                # gamepostimage = GamePostImage(Game=playergamepost, GameImage=savefile)
-                # gamepostimage.save()
 
             return HttpResponseRedirect('')
 
@@ -169,7 +173,6 @@ def delete_post_from_post_id(request, post_id):
     except Exception as ex:
         return HttpResponse(f'ошибка {ex}')
     
-
 class search(View):
 
     def get(self, request):
@@ -187,15 +190,47 @@ class search(View):
 class register(View):
 
     def get(self, request):
-        return render(request, 'register.html', {'RegisterForm' : RegisterForm })
+        return render(request, 'register.html', {'RegisterForm' : RegForm })
 
     def post(self, request):
-        pass
+        reg_form = RegForm(request.POST)
 
-class login(View):
+        if (reg_form.is_valid):
+            Login = request.POST.get('Login')
+            if ( MyUsers.objects.filter(Login = Login).count() <= 0):
+                user = reg_form.save(commit=False)
+                user.set_password(reg_form.cleaned_data['password'])
+                user.save()
+            else:
+                return HttpResponse("пользователь уже есть в базе")
+            return redirect("/")
+        else:
+            return HttpResponse("форма не валидна")
+
+class v_login(View):
 
     def get(self, request):
         return render(request, 'login.html', {'LoginForm' : LoginFrom })
 
     def post(self, request):
-        pass
+        
+        login_f = LoginFrom(request.POST)
+
+        if login_f.is_valid():
+
+            user = authenticate(Login=login_f.cleaned_data['Login'], password=login_f.cleaned_data['password'])
+            print(user)
+            if (user is not None):
+                login(request, user)
+                return render(request, 'index.html')
+            else:
+                return HttpResponse('пользователь не найден')
+        else:
+            return HttpResponse('что-то пошло не так')
+        
+def v_logout(request):
+
+    if request.method == 'GET':
+        logout(request)
+        return render(request, 'index.html')
+   

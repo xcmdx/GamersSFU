@@ -1,5 +1,23 @@
 
+<!-- load static нужна для подгрузки статичных файлов css там js -->
+{% load static %}
 
 
+<html>
 
-{% include 'header.html' %}
+        <head>
+            <!-- подключает файл заголовка -->
+            {% include 'header.html' %}
+        </head>
+
+        <body>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {{ RegisterForm.as_p }}
+
+                <button type=“submit”>Зарегистрировать</button>
+            </form>
+        </body>
+
+</html>

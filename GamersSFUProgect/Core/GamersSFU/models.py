@@ -19,28 +19,28 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
 class MyUsers(AbstractBaseUser, PermissionsMixin):
-    role = models.CharField(max_length=255, blank=True, null=True)
+
+    # role = models.CharField(max_length=255, blank=True, null=True)
+    #password = models.CharField(max_length=255, blank=False, null=False)
+    #role = models.PositiveIntegerField(default=1)
+    
     Login = models.CharField(max_length=255, unique=True)
     email = models.CharField(max_length=255, blank=True, null=True)
-#    password = models.CharField(max_length=255, blank=False, null=False)
-#    role = models.PositiveIntegerField(default=1)
+
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     is_developer = models.BooleanField(default=False)
-
     is_moderator = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'Login'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
     is_blocked = models.BooleanField(default=False)
-
     date_create = models.DateTimeField(auto_now_add=True)
-    #phone = models.CharField(max_length=11, null=True)
+
     class Meta:
         verbose_name = 'Пользователи'
         ordering = [ 'date_create' ]

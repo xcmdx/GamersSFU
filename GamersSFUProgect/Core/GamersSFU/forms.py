@@ -54,11 +54,7 @@ class GameGanreForm(forms.Form):
     
 # форма загрузки нескольких изображений
 class MultiImageForm(forms.Form):
-    
-    # images = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
-
-    # If you need to upload media files, you can use this:
     gameimages = MultiMediaField(
         min_num=1,
         max_num=5,
@@ -66,18 +62,6 @@ class MultiImageForm(forms.Form):
         media_type='image' 
     )
     
-# форма загрузки zip файлов игры
-# class GameFileForm(forms.ModelForm):
-#     class Meta:
-#         model = ZipFile
-#         fields = [ 'GameFile' ]
-
-# форма игровой иконки 
-# class GameIcoForm(forms.ModelForm):
-#     class Meta:
-#         model = GameIco
-#         fields = [ 'ImageFile' ]
-
 # вход
 class LoginFrom(forms.Form):
 
@@ -104,10 +88,10 @@ class LoginFrom(forms.Form):
 
 
 # регистрация
-class RegisterForm(forms.ModelForm):
+class RegForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
+        super(RegForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
