@@ -1,13 +1,15 @@
-from django.shortcuts import render, redirect
+
+
+
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+
 
 from django.db.models import Q
-
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
 from .models import *

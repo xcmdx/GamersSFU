@@ -8,11 +8,10 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    
-    {{ MultiImageForm.as_p }}
-    {{ GameFileForm.as_p }}
+        
     {{ PlaerGamePostForm.as_p }}
+    {{ MultiImageForm.as_p }}
     {{ MultiGanreForm.as_p }}
-    {{ GameIcoForm.as_p }}
+    
     <button type=“submit”>Upload</button>
 </form>
