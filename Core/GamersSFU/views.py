@@ -141,7 +141,11 @@ class get_img_from_post_id(View):
 # удаляет пост по id  
 # прим /delpost/4/ удалит пост и файлы на диске поста с id = 4
 def delete_post_from_post_id(request, post_id):
-
+    
+    # проверка на разработчика
+    if (not request.user.is_developer):
+        return HttpResponse("недостаточно прав")
+    
     try:
         id = 0
         images = {'images': []}
