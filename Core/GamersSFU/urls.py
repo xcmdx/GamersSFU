@@ -23,14 +23,21 @@ urlpatterns = [
     # get game post
     path("getpost/<int:post_id>/", views.getpost.as_view(), name="getpost"),
 
-    # register
-    path("register/", views.register.as_view(), name="register"),
 
     # login
-    path("login/", views.v_login.as_view(), name="login"),
+    path("login/", views.get_login, name="login"),
 
     # logout
-    path("logout/", views.v_logout, name="logout"),
+    path("logout/", views.get_logout, name="logout"),
+
+# post sheet
+
+    # register post
+    path("post_register/", views.register.as_view(), name="post_register"),
+
+    # login post
+    path("post_login/", views.v_login.as_view(), name="post_login"),
+
 
 # функциональные сслыки
 

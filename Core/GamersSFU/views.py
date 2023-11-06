@@ -200,19 +200,19 @@ class search(View):
 
 class register(View):
 
-    def get(self, request):
-        return render(request, 'register.html', {'RegisterForm' : RegForm })
-
     def post(self, request):
-        reg_form = RegForm(request.POST)
 
-        if (reg_form.is_valid):
+        login_f = request.POST.get('username')
+        password = request.POST.get('password')
+        password1 = request.POST.get('password1')
+
+        if (password1 == password):
             
-            Login = escape(request.POST.get('Login'))
-            print(Login)
-            if ( MyUsers.objects.filter(Login = Login).count() <= 0):
-                user = reg_form.save(commit=False)
-                user.set_password(reg_form.cleaned_data['password'])
+            
+            print(login_f)
+            if ( MyUsers.objects.filter(Login = login_f).count() <= 0):
+                user = MyUsers(Login=login_f)
+                user.set_password(password)
                 user.save()
             else:
                 return HttpResponse("пользователь уже есть в базе")
@@ -222,26 +222,25 @@ class register(View):
 
 class v_login(View):
 
-    def get(self, request):
-        return render(request, 'login.html', {'LoginForm' : LoginFrom })
+     def post(self, request):
 
-    def post(self, request):
-        
-        login_f = LoginFrom(request.POST)
+        # login_f = LoginFrom(request.POST)
+        login_f = request.POST.get('username')
+        password = request.POST.get('password')
 
-        if login_f.is_valid():
-
-            user = authenticate(Login=login_f.cleaned_data['Login'], password=login_f.cleaned_data['password'])
-            print(user)
-            if (user is not None):
-                login(request, user)
-                return render(request, 'index.html')
-            else:
-                return HttpResponse('пользователь не найден')
+        user = authenticate(Login=login_f, password=password)
+        print(user)
+        if (user is not None):
+            login(request, user)
+            return render(request, 'main.html')
         else:
-            return HttpResponse('что-то пошло не так')
+            return HttpResponse('пользователь не найден')
         
-def v_logout(request):
+def get_login(request):
+    if request.method == 'GET':
+        return render(request, 'login.html')
+
+def get_logout(request):
 
     if request.method == 'GET':
         logout(request)

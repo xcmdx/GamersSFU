@@ -9,19 +9,21 @@
 <body>
     <div class="container" id="container">
         <div class="form-container sign-up-container">
-            <form action="#">
+            <form id="send_data" action="{% url 'post_register' %}" method="post">
+                {% csrf_token %}
                 <h1 class="colorform">Создать Аккаунт</h1>
-                <input type="text" placeholder="Имя" />
-                <input type="password" placeholder="Пароль" />
-                <input type="password" placeholder="Подтвердите пароль" />
+                <input type="text" name="username" placeholder="Имя" />
+                <input type="password" name="password" placeholder="Пароль" />
+                <input type="password" name="password1" placeholder="Подтвердите пароль" />
                 <button class="clr-1">Зарегистрироваться</button>
             </form>
         </div>
         <div class="form-container sign-in-container">
-            <form action="#">
+            <form id="send_data" action="{% url 'post_login' %}" method="post">
+                {% csrf_token %}
                 <h1 class="colorform">Вход</h1>
-                <input type="text" placeholder="Имя" />
-                <input type="password" placeholder="Пароль" />
+                <input type="text" name="username" placeholder="Имя" />
+                <input type="password" name="password" placeholder="Пароль" />
                 <a href="#">Забыли пароль?</a>
                 <button class="clr-1">Вход</button>
             </form>
