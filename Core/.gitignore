@@ -1,0 +1,5 @@
+# .gitignore
+__pycache__/
+Core/__pycache__/
+GamersSFU/__pycache__/
+GamersSFU/migrations/__pycache__/
