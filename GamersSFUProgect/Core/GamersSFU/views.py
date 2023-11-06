@@ -19,7 +19,7 @@ import json
 
 
 def index(request):
-    return render(request, "index.html")
+    return render(request, "main.html")
 
 # загрузка поста пользователем
 class upload(LoginRequiredMixin, View):
