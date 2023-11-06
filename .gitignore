@@ -1,5 +1,4 @@
-# .gitignore
+__pycache__/
 Core/__pycache__/
-Core/Core/__pycache__/
-Core/GamersSFU/__pycache__/
-Core/GamersSFU/migrations/__pycache__/
+GamersSFU/__pycache__/
+GamersSFU/migrations/__pycache__/
