@@ -8,6 +8,8 @@ from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
+from django.utils.html import escape
+
 
 from django.db.models import Q
 
@@ -76,7 +78,10 @@ class upload(LoginRequiredMixin, View):
             # playergamepost.Developer =
             
             imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
-            
+
+            playergamepost.Title = escape(playergamepost.Title)
+            playergamepost.Description = escape(playergamepost.Description)
+
             playergamepost.save()
             
             for genre in gametags.cleaned_data['Genre']:
@@ -198,7 +203,9 @@ class register(View):
         reg_form = RegForm(request.POST)
 
         if (reg_form.is_valid):
-            Login = request.POST.get('Login')
+            
+            Login = escape(request.POST.get('Login'))
+            print(Login)
             if ( MyUsers.objects.filter(Login = Login).count() <= 0):
                 user = reg_form.save(commit=False)
                 user.set_password(reg_form.cleaned_data['password'])
