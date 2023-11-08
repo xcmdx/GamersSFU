@@ -91,6 +91,7 @@ form {
 }
 
 input {
+	color: rgb(177, 85, 95);
 	background-color: #292829;
 	border: none;
 	padding: 12px 15px;
