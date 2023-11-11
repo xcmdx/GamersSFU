@@ -75,7 +75,7 @@ class upload(LoginRequiredMixin, View):
             playergamepost.GameIco = gameico
 
             # потом добавлю 
-            # playergamepost.Developer =
+            playergamepost.Developer = request.user
             
             imgfiles = multiimageform.cleaned_data['gameimages'] # request.FILES.getlist('images')
 
@@ -203,11 +203,11 @@ class register(View):
     def post(self, request):
 
         login_f = request.POST.get('username')
+
         password = request.POST.get('password')
         password1 = request.POST.get('password1')
 
-        if (password1 == password):
-            
+        if (password1 == password and len(password) >= 5 and len(password) >= 5):
             
             print(login_f)
             if ( MyUsers.objects.filter(Login = login_f).count() <= 0):
@@ -232,9 +232,9 @@ class v_login(View):
         print(user)
         if (user is not None):
             login(request, user)
-            return render(request, 'main.html')
+            return redirect("/")        
         else:
-            return HttpResponse('пользователь не найден')
+            return HttpResponse('ошибка формы')
         
 def get_login(request):
     if request.method == 'GET':
