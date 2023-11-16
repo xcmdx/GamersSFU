@@ -16,9 +16,19 @@ signInButton.addEventListener('click', () => {
 
 const { useState, useEffect } = React;
 
+let servererrorlogin = ""
+
 function DevLoginSumbit(props) {
 	
-	const [ReactLoginValidErrorText, setReactLoginValidErrorText] = useState("");
+	const [ReactLoginValidErrorText, setReactLoginValidErrorText] = useState(servererrorlogin);
+
+	//  Выполнить действия при загрузке страницы
+	useEffect(() => {
+		let login_button = document.getElementById('login_button');
+		console.log(login_button);
+		login_button.addEventListener('click', validate_login_form);
+		
+	  }, []);
 
 	// валидация логина
 	const validate_login_form = () => {
@@ -52,26 +62,10 @@ function DevLoginSumbit(props) {
 
 			setReactLoginValidErrorText(error)
 		}
-
-
-	
-	
-	
-		
-		
 	};
-	
-	// signInButton.addEventListener(() => {
-	// 	alert("")
-	// });
 
 	return ( 
-		<div>
-				<div>
-					<p class="ErrorMessage">{ReactLoginValidErrorText}</p>
-				</div>
-				<button type="button" class="clr-1" onClick={validate_login_form}>Вход</button>
-		</div>
+		<p class="ErrorMessage">{ReactLoginValidErrorText}</p>
 	)
 }
 
@@ -83,10 +77,21 @@ ReactDOM.createRoot(
 );
 
 
+let servererrorregistration = ""
 
 function DevRegisterSumbit(props) {
 	
-	const [ReactRegisterValidErrorText, setReactRegisterValidErrorText] = useState("");
+	const [ReactRegisterValidErrorText, setReactRegisterValidErrorText] = useState(servererrorregistration);
+
+	//  Выполнить действия при загрузке страницы
+	useEffect(() => {
+		// достаем кнопку из DOM модели
+		let reg_button = document.getElementById('reg_button');
+		console.log(reg_button);
+		// добавляем обработчик события
+		reg_button.addEventListener('click', validate_register_form);
+		
+	  }, []);
 
 	// валидация логина
 	const validate_register_form = () => {
@@ -120,13 +125,7 @@ function DevRegisterSumbit(props) {
 	}
 
 	return ( 
-		<div>
-				<div>
-					<p class="ErrorMessage">{ReactRegisterValidErrorText}</p>
-				</div>
-				<button class="clr-1" type="button" onClick={validate_register_form}>Зарегистрироваться</button>
-
-		</div>
+		<p class="ErrorMessage">{ReactRegisterValidErrorText}</p>
 	)
 };
 

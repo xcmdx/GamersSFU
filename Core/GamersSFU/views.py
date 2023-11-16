@@ -3,21 +3,18 @@
 
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-
+from django.views.generic import View
 from django.utils.html import escape
-
-
 from django.db.models import Q
-
-from .forms import *
 from .models import *
 from os import remove
+from .forms import *
 import os
 import json
+
 
 
 def index(request):
@@ -234,7 +231,9 @@ class v_login(View):
             login(request, user)
             return redirect("/")        
         else:
-            return HttpResponse('ошибка формы')
+            response = redirect('/login') 
+            response.set_cookie('error', 'log&pass', max_age=1)  
+            return response
         
 def get_login(request):
     if request.method == 'GET':
